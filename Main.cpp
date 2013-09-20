@@ -1,28 +1,31 @@
 #include <conio.h>
 #include <iostream>
 #include <stdio.h>
-#include "stdlib.h"
 using namespace std;
 
-const int s = 15;
+//Ширина и длинна отображаемого поля
+const int s = 20;
 const int c = 20;
-//int x = 0;
-//int y = 0;
+//нажатая клавиша
 int keyus = 0;
+//если ложь то программа закрывается
 bool run = true;
 
-
+//Генерируемая карта
 char maps [s][c];
+//видимое поле
 char field [s][c];
 
+//масив возможных обьектов на карте
 char GrObj [6] = {' ',' ','#',' ',' '};
-
+//Шаблоны функций
 int MapCreator(char maps[s][c]);
 void input ();
 void render(char _field[s][c]);
 void MapUpdate(char _field[s][c], char maps[s][c]);
 void AI ();
 
+//Класс персонажа
 class charact
 {
 private:
@@ -35,10 +38,10 @@ public:
     int Lx;
     int Ly;
     char symb;
-
+//конструкторы класса (тут скрывается поебень)
     charact() : max_health(100),cur_health(100), att(1),def(1),Lx(0), Ly(0),symb('E'){}
     charact(int initMax_health, int initCur_health, int initAtt, int initDef): max_health(initMax_health), cur_health(initCur_health), att(initAtt), def(initDef){}
-
+//Функция передвижения персонажа
     void move_ch(int ix, int iy)
     {
         if(true)//field[Lx+ix][Ly+iy] != GrObj[2])
@@ -53,10 +56,12 @@ public:
         }
 
     }
+    //Функция получения здоровья
     int GetHealth()
     {
        return cur_health;
     }
+    //функция выставления обьекта на карту
     void AddToField()
     {
         field[Lx][Ly] = symb;
@@ -106,6 +111,7 @@ int MapCreator(char map[s][c])
     }
     return 0;
 }
+//функция захвата клавиш
 void input ()
 {
     char key;
@@ -130,6 +136,7 @@ void input ()
     }
     keyus=ikey;
 }
+//функция прорисовки, потом можно впилить сюда что-то покрасивее
 void render(char _field[s][c])
 {
     charact player;
@@ -148,6 +155,7 @@ void render(char _field[s][c])
     cout<<"Health "<<player.GetHealth()<<" "<<"Enemy: "<<enemy.GetHealth()<<endl<<player.Lx<<" "<<player.Ly<<" "<<enemy.Lx<<" "<<enemy.Ly;
 }
 
+//берём карту и добавляем на неё объекты с поля
 void MapUpdate(char _field[s][c], char _map[s][c])
 {
     for (int i=0; i<s; i++)
@@ -156,6 +164,7 @@ void MapUpdate(char _field[s][c], char _map[s][c])
             field[i][j]=_map[i][j];
         }
 }
+//искуственный интелект, перемещается на два рандомных значения от -1 до 1 по двум осям
 void AI()
 {
     charact enemy;
