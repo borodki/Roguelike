@@ -1,6 +1,7 @@
 #include <conio.h>
 #include <iostream>
 #include <stdio.h>
+#include "stdlib.h"
 using namespace std;
 
 //Ширина и длинна отображаемого поля
@@ -17,7 +18,7 @@ char maps [s][c];
 char field [s][c];
 
 //масив возможных обьектов на карте
-char GrObj [6] = {' ',' ','#',' ',' '};
+char GrObj [6] = {',','.','#','_',' '};
 //Шаблоны функций
 int MapCreator(char maps[s][c]);
 void input ();
@@ -28,23 +29,20 @@ void AI ();
 //Класс персонажа
 class charact
 {
-private:
-    int max_health;
-    int cur_health;
-    int att;
-    int def;
+    public:
+    charact (int imax_health,int icur_health, int iLx, int iLy, char isymb)
+    {
+        max_health = imax_health;
+        cur_health = icur_health;
+        Lx = iLx;
+        Ly = iLy;
+        symb = isymb;
 
-public:
-    int Lx;
-    int Ly;
-    char symb;
-//конструкторы класса (тут скрывается поебень)
-    charact() : max_health(100),cur_health(100), att(1),def(1),Lx(0), Ly(0),symb('E'){}
-    charact(int initMax_health, int initCur_health, int initAtt, int initDef): max_health(initMax_health), cur_health(initCur_health), att(initAtt), def(initDef){}
+    };
 //Функция передвижения персонажа
     void move_ch(int ix, int iy)
     {
-        if(true)//field[Lx+ix][Ly+iy] != GrObj[2])
+        if(field[Lx+ix][Ly+iy] != GrObj[2])
         {
             Lx=Lx+ix;
             if(Lx<=0) Lx = 0;
@@ -61,28 +59,33 @@ public:
     {
        return cur_health;
     }
-    //функция выставления обьекта на карту
-    void AddToField()
+    int Get_X()
     {
-        field[Lx][Ly] = symb;
+        return Lx;
     }
+    int Get_Y()
+    {
+        return Ly;
+    }
+    char Get_Symbol()
+    {
+        return symb;
+    }
+    char symb;
+    private:
+    int max_health;
+    int cur_health;
+    int Lx;
+    int Ly;
+
 
 };
-//charact player {0,0,'@',100,100,1,1};
-//charact enemy {14,19,'E',100,100,0,0};
 
-
+charact player(100, 100, 0, 0, 'P');
+charact enemy(100, 100, 19, 19, 'E');
 
 int main()
 {
-charact :: charact (100,100,1,1)
-{
-    Lx = 0;
-    Ly = 0;
-    Symb = '@';
-};
-//charact* enemy = new charact (14,19,100,100,1,1,'E');
-
     MapCreator(maps); //создаём карту
     while(run)
     {
@@ -91,12 +94,9 @@ charact :: charact (100,100,1,1)
 //        field[player.x][player.y] = player.symb;
 //        field[enemy.x][enemy.y] = enemy.symb;
         MapUpdate(field,maps);
-//        player->AddToField();
-//        enemy->AddToField();
-
         render(field);
         if(keyus == 27)
-            run = false;
+        run = false;
     }
 }
 int MapCreator(char map[s][c])
@@ -116,7 +116,6 @@ void input ()
 {
     char key;
     int ikey;
-    charact player;
     key = _getch();
     ikey = static_cast<int>(key);
     switch(ikey)
@@ -139,8 +138,6 @@ void input ()
 //функция прорисовки, потом можно впилить сюда что-то покрасивее
 void render(char _field[s][c])
 {
-    charact player;
-    charact enemy;
     system("cls");
     for(int i=0; i<s; i++)
     {
@@ -152,7 +149,6 @@ void render(char _field[s][c])
         }
         cout<<endl;
     }
-    cout<<"Health "<<player.GetHealth()<<" "<<"Enemy: "<<enemy.GetHealth()<<endl<<player.Lx<<" "<<player.Ly<<" "<<enemy.Lx<<" "<<enemy.Ly;
 }
 
 //берём карту и добавляем на неё объекты с поля
@@ -163,11 +159,12 @@ void MapUpdate(char _field[s][c], char _map[s][c])
         {
             field[i][j]=_map[i][j];
         }
+        field[player.Get_X()][player.Get_Y()] = player.Get_Symbol();
+        field[enemy.Get_X()][enemy.Get_Y()] = 'E';
 }
 //искуственный интелект, перемещается на два рандомных значения от -1 до 1 по двум осям
 void AI()
 {
-    charact enemy;
     int raX=1;
     int raY=1;
     raX = rand() % 2 - rand() % 2;
